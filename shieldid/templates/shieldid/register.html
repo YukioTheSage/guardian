@@ -1,0 +1,65 @@
+{% extends "shieldid/base.html" %}
+
+{% block title %}ShieldID | Register{% endblock %}
+
+{% block content %}
+<section class="grid gap-6 md:grid-cols-[1fr_1fr]">
+    <div class="glass-panel rounded-3xl p-7 shadow-md">
+        <h1 class="text-3xl font-bold">Create ShieldID</h1>
+        <p class="mt-2 text-slate-700">Real data is encrypted immediately and never exposed by verification APIs.</p>
+        <form id="register-form" class="mt-6 space-y-4">
+            <label class="block text-sm font-medium">
+                Name
+                <input name="name" required class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2" />
+            </label>
+            <label class="block text-sm font-medium">
+                Age
+                <input type="number" name="age" min="5" max="120" required class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2" />
+            </label>
+            <label class="block text-sm font-medium">
+                Email
+                <input type="email" name="email" required class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2" />
+            </label>
+            <button class="brand-btn w-full rounded-xl px-4 py-3 font-bold text-white" type="submit">Register and Generate ShieldID</button>
+        </form>
+    </div>
+    <div id="register-result" class="glass-panel rounded-3xl p-7 shadow-md">
+        <h2 class="text-xl font-bold">Result</h2>
+        <p class="mt-2 text-slate-600">Submit the form to generate a pseudonymous identity.</p>
+        <pre id="result-json" class="mt-4 max-h-[480px] overflow-auto rounded-2xl bg-slate-950 p-4 text-xs text-emerald-300"></pre>
+        <p id="dashboard-hint" class="mt-4 text-sm text-slate-600"></p>
+    </div>
+</section>
+
+<script>
+const form = document.getElementById("register-form");
+const result = document.getElementById("result-json");
+const dashboardHint = document.getElementById("dashboard-hint");
+
+form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const payload = {
+        name: form.name.value,
+        age: Number(form.age.value),
+        email: form.email.value,
+    };
+
+    result.textContent = "Submitting...";
+    const response = await fetch("/api/register/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+    result.textContent = JSON.stringify(data, null, 2);
+
+    if (response.ok && data.shield_id) {
+        dashboardHint.innerHTML = `Saved to your session dashboard. <a class="underline font-semibold" href="/dashboard/">Open Dashboard</a>.`;
+    } else {
+        dashboardHint.textContent = "Registration failed. Please review the response above.";
+    }
+});
+</script>
+{% endblock %}

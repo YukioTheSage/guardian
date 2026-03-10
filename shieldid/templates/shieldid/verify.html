@@ -1,0 +1,43 @@
+{% extends "shieldid/base.html" %}
+
+{% block title %}ShieldID | Verify{% endblock %}
+
+{% block content %}
+<section class="grid gap-6 md:grid-cols-[1fr_1fr]">
+    <div class="glass-panel rounded-3xl p-7 shadow-md">
+        <h1 class="text-3xl font-bold">Verification Checker</h1>
+        <p class="mt-2 text-slate-700">Institution view: only receives pseudonym + age range.</p>
+        <form id="verify-form" class="mt-6 space-y-4">
+            <label class="block text-sm font-medium">
+                ShieldID
+                <input name="shield_id" placeholder="SH-A7K2-M9P1" required class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 uppercase" />
+            </label>
+            <button class="brand-btn w-full rounded-xl px-4 py-3 font-bold text-white" type="submit">Verify</button>
+        </form>
+    </div>
+    <div class="glass-panel rounded-3xl p-7 shadow-md">
+        <h2 class="text-xl font-bold">API Response</h2>
+        <pre id="verify-result" class="mt-4 max-h-[480px] overflow-auto rounded-2xl bg-slate-950 p-4 text-xs text-emerald-300"></pre>
+    </div>
+</section>
+
+<script>
+const form = document.getElementById("verify-form");
+const result = document.getElementById("verify-result");
+const queryShieldId = new URLSearchParams(window.location.search).get("shield_id");
+
+if (queryShieldId) {
+    form.shield_id.value = queryShieldId.toUpperCase();
+}
+
+form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const shieldId = form.shield_id.value.trim().toUpperCase();
+    result.textContent = "Checking...";
+
+    const response = await fetch(`/api/verify/${encodeURIComponent(shieldId)}/`);
+    const data = await response.json();
+    result.textContent = JSON.stringify(data, null, 2);
+});
+</script>
+{% endblock %}

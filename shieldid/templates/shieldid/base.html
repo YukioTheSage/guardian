@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}ShieldID{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --bg-1: #f3fff8;
+            --bg-2: #f2f6ff;
+            --ink: #0f172a;
+            --brand: #007a5a;
+            --brand-2: #1251c2;
+        }
+
+        body {
+            font-family: "Space Grotesk", sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 15% 10%, #ccffe7 0%, transparent 35%),
+                radial-gradient(circle at 85% 25%, #dbe8ff 0%, transparent 32%),
+                linear-gradient(120deg, var(--bg-1), var(--bg-2));
+            min-height: 100vh;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            backdrop-filter: blur(6px);
+        }
+
+        .brand-btn {
+            background: linear-gradient(90deg, var(--brand), var(--brand-2));
+        }
+    </style>
+    {% block head_extra %}{% endblock %}
+</head>
+<body>
+    <header class="px-4 py-4 md:px-10">
+        <nav class="glass-panel mx-auto flex max-w-6xl items-center justify-between rounded-2xl px-5 py-3 shadow-sm">
+            <a href="/" class="text-lg font-bold tracking-wide">ShieldID</a>
+            <div class="flex gap-4 text-sm md:text-base">
+                <a href="/register/" class="hover:underline">Register</a>
+                <a href="/dashboard/" class="hover:underline">Dashboard</a>
+                <a href="/verify/" class="hover:underline">Verify</a>
+                <a href="/edtech-demo/" class="hover:underline">EdTech Demo</a>
+                <a href="/admin/" class="hover:underline">Admin</a>
+            </div>
+        </nav>
+    </header>
+    <main class="px-4 pb-10 md:px-10">
+        <div class="mx-auto max-w-6xl animate-[fadeIn_450ms_ease-out]">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+</body>
+</html>

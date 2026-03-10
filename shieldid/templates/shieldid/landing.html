@@ -1,0 +1,51 @@
+{% extends "shieldid/base.html" %}
+
+{% block title %}ShieldID | Privacy-First Identity{% endblock %}
+
+{% block content %}
+<section class="grid gap-6 md:grid-cols-[1.25fr_1fr]">
+    <div class="glass-panel rounded-3xl p-8 shadow-md">
+        <p class="text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">FOSSASIA Hackathon 2026</p>
+        <h1 class="mt-3 text-4xl font-bold leading-tight md:text-5xl">
+            Privacy-preserving identity
+            <span class="text-emerald-700">for young users</span>
+        </h1>
+        <p class="mt-5 max-w-2xl text-lg text-slate-700">
+            ShieldID gives children and teens a pseudonymous identity platforms can verify without collecting names, emails, or exact age.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+            <a href="/register/" class="brand-btn rounded-xl px-5 py-3 text-sm font-bold text-white shadow">Start Registration</a>
+            <a href="/dashboard/" class="rounded-xl border border-slate-200 px-5 py-3 text-sm font-bold text-slate-800">Open My Dashboard</a>
+            <a href="/verify/" class="rounded-xl border border-slate-200 px-5 py-3 text-sm font-bold text-slate-800">Try Verification API</a>
+        </div>
+    </div>
+    <div class="glass-panel rounded-3xl p-8 shadow-md">
+        <h2 class="text-xl font-bold">Privacy Guarantees</h2>
+        <ul class="mt-4 space-y-3 text-slate-700">
+            <li>Encrypted PII at rest with Fernet</li>
+            <li>Public verification reveals only pseudonym + age range</li>
+            <li>Consent endpoint requires passkey challenge assertion</li>
+            <li>Certificates are tied to pseudonyms, not legal names</li>
+        </ul>
+        <div class="mt-6 rounded-2xl bg-slate-950 p-4 text-xs text-emerald-300">
+            GET /api/verify/SH-A7K2-M9P1/<br />
+            {"verified": true, "age_range": "13-17"}
+        </div>
+    </div>
+</section>
+
+<section class="mt-8 grid gap-6 md:grid-cols-3">
+    <article class="glass-panel rounded-2xl p-6 shadow-sm">
+        <h3 class="text-lg font-bold">1. Register Once</h3>
+        <p class="mt-2 text-slate-700">Create a profile and receive a ShieldID pseudonym.</p>
+    </article>
+    <article class="glass-panel rounded-2xl p-6 shadow-sm">
+        <h3 class="text-lg font-bold">2. Verify Safely</h3>
+        <p class="mt-2 text-slate-700">Institutions call the verification API with no PII leakage.</p>
+    </article>
+    <article class="glass-panel rounded-2xl p-6 shadow-sm">
+        <h3 class="text-lg font-bold">3. Reveal by Consent</h3>
+        <p class="mt-2 text-slate-700">Only passkey assertion unlocks selected fields.</p>
+    </article>
+</section>
+{% endblock %}

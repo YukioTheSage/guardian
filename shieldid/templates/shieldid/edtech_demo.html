@@ -1,0 +1,100 @@
+{% extends "shieldid/base.html" %}
+
+{% block title %}ShieldID | EdTech Demo{% endblock %}
+
+{% block content %}
+<section class="grid gap-6 md:grid-cols-2">
+    <article class="glass-panel rounded-3xl p-7 shadow-md">
+        <h1 class="text-3xl font-bold">Mock EdTech Integration</h1>
+        <p class="mt-2 text-slate-700">Simulates an education platform that never touches legal identity data.</p>
+
+        <h2 class="mt-6 text-xl font-bold">Step 1: Verify ShieldID</h2>
+        <form id="verify-form" class="mt-3 space-y-3">
+            <input name="shield_id" placeholder="SH-XXXX-XXXX" required class="w-full rounded-xl border border-slate-200 px-3 py-2 uppercase" />
+            <button class="brand-btn w-full rounded-xl px-4 py-3 font-bold text-white" type="submit">Verify Account</button>
+        </form>
+
+        <h2 class="mt-7 text-xl font-bold">Step 2: Issue Certificate</h2>
+        <form id="issue-form" class="mt-3 space-y-3">
+            <input name="shield_id" placeholder="SH-XXXX-XXXX" required class="w-full rounded-xl border border-slate-200 px-3 py-2 uppercase" />
+            <input name="course_title" placeholder="AI Safety Basics" required class="w-full rounded-xl border border-slate-200 px-3 py-2" />
+            <button class="w-full rounded-xl border border-slate-300 px-4 py-3 font-bold text-slate-800" type="submit">Issue Pseudonymous Certificate</button>
+        </form>
+    </article>
+
+    <article class="glass-panel rounded-3xl p-7 shadow-md">
+        <h2 class="text-xl font-bold">Step 3: Consent-Based Reveal</h2>
+        <form id="consent-form" class="mt-3 space-y-3">
+            <input name="shield_id" placeholder="SH-XXXX-XXXX" required class="w-full rounded-xl border border-slate-200 px-3 py-2 uppercase" />
+            <input name="passkey_assertion" placeholder="passkey_challenge from registration response" required class="w-full rounded-xl border border-slate-200 px-3 py-2" />
+            <input name="fields" placeholder="name,age" class="w-full rounded-xl border border-slate-200 px-3 py-2" />
+            <button class="w-full rounded-xl border border-slate-300 px-4 py-3 font-bold text-slate-800" type="submit">Request Selective Data Reveal</button>
+        </form>
+
+        <h2 class="mt-7 text-xl font-bold">Step 4: Validate Certificate</h2>
+        <form id="certificate-form" class="mt-3 space-y-3">
+            <input name="shield_id" placeholder="SH-XXXX-XXXX" required class="w-full rounded-xl border border-slate-200 px-3 py-2 uppercase" />
+            <input name="cert_id" placeholder="CERT-XXXXXXXX" required class="w-full rounded-xl border border-slate-200 px-3 py-2 uppercase" />
+            <button class="w-full rounded-xl border border-slate-300 px-4 py-3 font-bold text-slate-800" type="submit">Verify Certificate</button>
+        </form>
+
+        <pre id="demo-result" class="mt-5 max-h-[440px] overflow-auto rounded-2xl bg-slate-950 p-4 text-xs text-emerald-300"></pre>
+    </article>
+</section>
+
+<script>
+const output = document.getElementById("demo-result");
+
+function print(label, data) {
+    output.textContent = `${label}\n${JSON.stringify(data, null, 2)}\n\n${output.textContent}`;
+}
+
+document.getElementById("verify-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const shieldId = event.target.shield_id.value.trim().toUpperCase();
+    const response = await fetch(`/api/verify/${encodeURIComponent(shieldId)}/`);
+    const data = await response.json();
+    print("VERIFY:", data);
+});
+
+document.getElementById("issue-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const shieldId = event.target.shield_id.value.trim().toUpperCase();
+    const response = await fetch(`/api/certificate/${encodeURIComponent(shieldId)}/issue/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ course_title: event.target.course_title.value.trim() }),
+    });
+    const data = await response.json();
+    print("ISSUE CERTIFICATE:", data);
+});
+
+document.getElementById("consent-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const shieldId = event.target.shield_id.value.trim().toUpperCase();
+    const fields = event.target.fields.value.trim()
+        ? event.target.fields.value.split(",").map(item => item.trim()).filter(Boolean)
+        : ["name", "age"];
+
+    const response = await fetch(`/api/consent/${encodeURIComponent(shieldId)}/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            passkey_assertion: event.target.passkey_assertion.value.trim(),
+            fields,
+        }),
+    });
+    const data = await response.json();
+    print("CONSENT:", data);
+});
+
+document.getElementById("certificate-form").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const shieldId = event.target.shield_id.value.trim().toUpperCase();
+    const certId = event.target.cert_id.value.trim().toUpperCase();
+    const response = await fetch(`/api/certificate/${encodeURIComponent(shieldId)}/${encodeURIComponent(certId)}/`);
+    const data = await response.json();
+    print("CERT LOOKUP:", data);
+});
+</script>
+{% endblock %}
